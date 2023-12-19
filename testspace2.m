@@ -48,12 +48,46 @@ images_preprocess = ["./apple/2.jpg", "./apple/64.jpg", "./apple/10.jpg", "./app
 
 [~, num_imgs] = size(images_preprocess);
 
-for i = 1:num_imgs
+for i = 1:1
     borders = preprocess_image(images_preprocess(i));
     figure, imshow(borders);
 end
 
 borders = preprocess_image("./apple/43.jpg");
 figure, imshow(borders);
+
+%% 
+close all
+%borders = preprocess_image("Apple\24.jpg");
+
+im = imread('Apple\59.jpg');
+im_grey = im2gray(im);
+ee = strel('disk', 1);
+grad = imsubtract(imdilate(im_grey,ee),im_grey);
+figure,imshow(grad,[]),title('gradiente morfológico')
+
+%% 
+close all
+im = imread('Intel\7.jpg');
+figure,imshow(im),title('original image')
+im_grey = im2gray(im);
+%im_grey = imadjust(imcomplement(im_grey));
+im_grey = imadjust(im_grey);
+figure,imshow(im_grey),title('adjusted image')
+mark = im_grey;
+mark(2:end-1,2:end-1) = 0;
+rec = imreconstruct(mark,im_grey);
+figure,imshow(rec),title('imagen reconstruida'),impixelinfo
+th = graythresh(rec);
+im_bw = im2bw(rec,th);
+%mark2 = im_bw;
+%mark2(2:end-1,2:end-1) = 0;
+%rec2 = imreconstruct(mark2,im_bw);
+%figure,imshow(rec2),title('imagen reconstruida final'),impixelinfo
+
+%% 
+
+
+
 
 
