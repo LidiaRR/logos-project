@@ -1,104 +1,65 @@
-%% GET DATA
-
 close all
 clear
-im = imread('Daewoo Electronics\47.jpg');
-imshow(im), title('im 47 Daewoo')
 
-% Trobar contorns
-im_grey = im2bw(im);
-dil = imdilate(im_grey, strel('disk',1));
-cont = imsubtract(dil, im_grey);
-%figure, imshow(cont), title('contorns');
+images = ["apple\2.jpg", "apple\16.jpg", "apple\14.jpg", "apple\22.jpg", "apple\50.jpg", "apple\34.jpg",...
+    "Cisco Systems\1.jpg","Cisco Systems\18.jpg","Cisco Systems\22.jpg","Cisco Systems\26.jpg","Cisco Systems\31.jpg","Cisco Systems\44.jpg",...
+    "Daewoo Electronics\3.jpg", "Daewoo Electronics\34.jpg", "Daewoo Electronics\17.jpg", "Daewoo Electronics\21.jpg", "Daewoo Electronics\42.jpg", "Daewoo Electronics\47.jpg",...
+    "IBM\2.jpg","IBM\9.jpg","IBM\12.jpg","IBM\14.jpg","IBM\45.jpg","IBM\56.jpg",...
+    "hp\77.jpg", "hp\78.jpg", "hp\80.jpg", "hp\10.jpg", "hp\23.jpg", "hp\27.jpg",...
+    "Intel\2.jpg","Intel\4.jpg","Intel\9.jpg","Intel\22.jpg","Intel\46.jpg","Intel\35.jpg"];
+data = [];
+response = ["apple","apple","apple","apple","apple","apple",...
+            "cisco","cisco","cisco","cisco","cisco","cisco",...
+            "daewoo","daewoo","daewoo","daewoo","daewoo","daewoo",...
+            "ibm","ibm","ibm","ibm","ibm","ibm",...
+            "hp","hp","hp","hp","hp","hp",...
+            "intel","intel","intel","intel","intel","intel"];
 
-cont_bw = imbinarize(cont);
-%figure, imshow(cont_bw), title('contorn bw')
+for i = 1:length(images)
+    im = imread(images(i));
+    im_grey = im2gray(im);
+    im_grey = imadjust(im_grey);
+    mark = im_grey;
+    mark(2:end-1,2:end-1) = 0;
+    rec = imreconstruct(mark,im_grey);
+    th = graythresh(rec);
+    im_bw = im2bw(rec,th);
+    %figure,imshow(im_bw),title('imagen bw')
 
-% Reconstruir per tenir imatge lógica
-[files,cols] = size(cont_bw);
-markers = ones(files, cols);
-markers(2:end-1,2:end-1) = 0;
-im_bw = ~imreconstruct(markers, double(~cont_bw),4);
-figure, imshow(im_bw), title('reconstrucció bw')
+    labelIm = bwlabel(~im_bw);
+    %figure,imshow(labelIm, []),impixelinfo
+    dades = regionprops(labelIm, 'all');
+    [~,indexMaxArea] = max([dades.Area]);
+    %figure, imshow(labelIm == indexMaxArea)
 
-% Dades varies
-dades = regionprops(im_bw, 'all');
-relativeHorizontalDistance = abs(dades(2).Centroid(1)-dades(3).Centroid(1))/abs(dades(2).Centroid(1)-dades(1).Centroid(1));
-relativeDistance23 = pdist2(dades(2).Centroid, dades(3).Centroid)^2/dades(2).Area;
-relativeArea = dades(1).Area/dades(3).Area;
+    desc1 = fourierDescriptors(labelIm == indexMaxArea);
+    desc2 = descriptorsHough(rec);
+    desc = [desc1 ; desc2];
 
-ero = imerode(im_bw, strel('disk',1));
-new_cont = imsubtract(im_bw, ero);
-labeledImage = bwlabel(new_cont);
-figure, imshow(labeledImage, []), colormap('colorcube'), impixelinfo
-
-
-%% 
-
-im = imread('Daewoo Electronics\37.jpg');
-imshow(im), title('im 34 Daewoo')
-
-% Trobar contorns
-im_grey = im2bw(im);
-dil = imdilate(im_grey, strel('disk',1));
-cont = imsubtract(dil, im_grey);
-%figure, imshow(cont), title('contorns');
-
-cont_bw = imbinarize(cont);
-%figure, imshow(cont_bw), title('contorn bw')
-
-% Reconstruir per tenir imatge lógica
-[files,cols] = size(cont_bw);
-markers = ones(files, cols);
-markers(2:end-1,2:end-1) = 0;
-im_bw = ~imreconstruct(markers, double(~cont_bw),4);
-figure, imshow(im_bw), title('reconstrucció bw')
-
-% Dades varies
-dadesNoves = regionprops(im_bw, 'all');
-
-% Find Fourier descriptors
-ero = imerode(im_bw, strel('disk',1));
-new_cont = imsubtract(im_bw, ero);
-labeledImage = bwlabel(new_cont);
-figure, imshow(labeledImage, []), colormap('colorcube'), impixelinfo
-
-L = max(labeledImage(:));
-
-
-for i = 1:L
-    for j = 1:L
-        if j ~= i
-            for k = 1:L
-                if k ~= i & k ~= j
-                    newRelativeDistance = pdist2(dadesNoves(j).Centroid, dadesNoves(k).Centroid)/pdist2(dadesNoves(j).Centroid,dadesNoves(i).Centroid);
-                    newRelativeHorizontalDistance = abs(dadesNoves(j).Centroid(1)-dadesNoves(k).Centroid(1))/abs(dadesNoves(j).Centroid(1)-dadesNoves(i).Centroid(1));
-                    newRelativeDistance23 = pdist2(dadesNoves(j).Centroid, dadesNoves(k).Centroid)^2/dadesNoves(j).Area;
-                    newRelativeDistance12 = dadesNoves(i).Area/abs(dadesNoves(i).Centroid(2)-dadesNoves(j).Centroid(2))^2;
-                    newRelativeArea = dadesNoves(i).Area/dadesNoves(k).Area;
-                    if abs(newRelativeArea-relativeArea) < 8 & abs(newRelativeHorizontalDistance-relativeHorizontalDistance) < 0.1 & abs(newRelativeDistance23 - relativeDistance23) < 0.11 & ...
-                            abs(dadesNoves(i).Solidity - dades(1).Solidity) < 0.15 &...
-                            abs(dadesNoves(j).Circularity - dades(2).Circularity) < 0.15 & abs(dadesNoves(j).Solidity - dades(2).Solidity) < 0.15 &...
-                            abs(dadesNoves(k).Solidity - dades(3).Solidity) < 0.15
-                        [i,j,k]
-                        %{
-                        newRelativeDistance
-                        newRelativeHorizontalDistance
-                        newRelativeDistance23
-                        newRelativeDistance12
-                        newRelativeArea
-                        %}
-                    end
-                end
-            end
-        end
-       
-    end
+    data = [data desc];
 end
+%{
+for i = 1:length(images_compl)
+    im = imread(images_compl(i));
+    im_grey = im2gray(im);
+    im_grey = imadjust(imcomplement(im_grey));
+    mark = im_grey;
+    mark(2:end-1,2:end-1) = 0;
+    rec = imreconstruct(mark,im_grey);
+    th = graythresh(rec);
+    im_bw = im2bw(rec,th);
+    %figure,imshow(im_bw),title('imagen bw')
 
+    labelIm = bwlabel(~im_bw);
+    %figure,imshow(labelIm, []),impixelinfo
+    dades = regionprops(labelIm, 'all');
+    [~,indexMaxArea] = max([dades.Area]);
+    %figure, imshow(labelIm == indexMaxArea)
 
+    desc1 = fourierDescriptors(labelIm == indexMaxArea);
+    desc2 = descriptorsHough(rec);
+    desc = [desc1 ; desc2];
 
-
-
-
-
+    data = [data desc];
+end
+%}

@@ -1,5 +1,6 @@
 function [descriptors] = descriptorsHough(im)
     BW = edge(im,'canny');
+    %figure,imshow(BW),title('canny')
     [H,alfa,rho] = hough(BW);
     
     P = houghpeaks(H,6);
