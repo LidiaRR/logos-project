@@ -1,0 +1,15 @@
+prueba 9 logos sin preproceso(apple, cisco, daewoo, ibm, hp, intel):
+- fine knn 88,9%
+
+prueba 9 logos con preproceso(apple, cisco, daewoo, ibm, hp, intel):
+- fine knn 83,3%
+- linear svm 83,3%
+- neural network 83,3%
+
+prueba todos los logos sin preproceso:
+- cubic svm 86,1%
+
+prueba todos los logos con preproceso:
+- cubic svm 70,4%
+
+

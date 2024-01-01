@@ -85,9 +85,9 @@ im_bw = im2bw(rec,th);
 %rec2 = imreconstruct(mark2,im_bw);
 %figure,imshow(rec2),title('imagen reconstruida final'),impixelinfo
 
-%% 
-
-
-
-
-
+%% pruebas con hog + cirlces Hough + lines Hough
+pathIm = strrep(images_directory, '\', '/') + "apple/14.jpg";
+im = imread(pathIm);
+im_grey = im2gray(im);
+houghLines = houghDescriptors_lines(im_grey);
+houghCircles = houghDescriptors_circles(im_grey);
