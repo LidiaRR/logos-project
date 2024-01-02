@@ -8,7 +8,14 @@ function descriptors = houghDescriptors_circles(im)
         centers = centers(pos,:);
         [r,c] = size(centers);
         descriptors = [imresize(centers,[r*c,1]); radii(pos)];
+
+        %{
+        figure, imshow(im)
+        hold on
+        viscircles(centers, radii(pos),'Edgecolor','g')
+        %}
     end
+
     for i = length(descriptors)+1:12
         descriptors = [descriptors ; 0];
     end
