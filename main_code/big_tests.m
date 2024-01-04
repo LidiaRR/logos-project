@@ -2,7 +2,7 @@
 % excepto las de complex_background
 
 close all
-clear
+%clear
 
 [image_paths, response] = getImagePathsAndResponse();
 
@@ -15,11 +15,11 @@ for i = 1:length(image_paths)
     %im_pre = preprocess_image(im_grey);
    
     % Tipos de descriptores que usamos
-    houghLines = houghDescriptors_lines(im_pre);
-    houghCircles = houghDescriptors_circles(im_pre);
-    [hog, vis] = extractHOGFeatures(im_pre, 'CellSize', [64,64]);
+    %houghLines = houghDescriptors_lines(im_pre);
+    %houghCircles = houghDescriptors_circles(im_pre);
+    %[hog, vis] = extractHOGFeatures(im_pre, 'CellSize', [64,64]);
     %figure, plot(vis), title('cell 64x64')
-    desc = [houghLines ; houghCircles; hog'];
+    desc = getAllDescriptors(im_pre);
 
     data = [data desc];
 end
@@ -41,5 +41,5 @@ desc = [houghLines ; houghCircles; hog'];
 
 %%
 
-im = imread('../my_images/motorola1.png');
-[prediction, scores] = makePrediction(im, trainedModel);
+im = imread('../my_images/motorola3.jpg');
+[prediction, scores, result] = makePrediction(im, trainedModel);

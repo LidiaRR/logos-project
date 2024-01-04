@@ -2,7 +2,7 @@
 % los modelos. Funciona tanto para Linux como Windows.
 function [images_paths, response] = getImagePathsAndResponse()
     parent_folder = '..';
-    images_directory_name = 'modified_images_logos';
+    images_directory_name = 'modified_images_logos2';
     images_directory = fullfile(parent_folder, images_directory_name);
 
     % Obtener los nombres de las carpetas (logos)
