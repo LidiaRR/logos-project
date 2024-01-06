@@ -41,5 +41,9 @@ desc = [houghLines ; houghCircles; hog'];
 
 %%
 
+trainedModel = trainClassifierSVM(data, response);
+
+%%
+
 im = imread('../my_images/motorola3.jpg');
 [prediction, scores, result] = makePrediction(im, trainedModel);
