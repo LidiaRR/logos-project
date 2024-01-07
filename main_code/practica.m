@@ -1,5 +1,5 @@
 model = trainModel();
 
-im = imread('../my_images/apple2.jpg');
-fastPrediction(im, model)
-makePrediction(im, model)
+im = imread('../my_images/motorola3.jpg');
+[prediction, score] = fastPrediction(im, model)
+[prediction, score] = makePrediction(im, model)
