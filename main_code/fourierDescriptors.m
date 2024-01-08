@@ -4,7 +4,7 @@ function coefficients = fourierDescriptors(im)
     dades = regionprops(im_bw, 'all');
     [~,indexMaxArea] = max([dades.Area]);
 
-    if (indexMaxArea ~= [])
+    if (indexMaxArea >= 1)
         im_comp = im_label == indexMaxArea;
         % Find descrete coordinates
         N = 20;
@@ -22,14 +22,14 @@ function coefficients = fourierDescriptors(im)
         coefficients = [real(coefficients) ; imag(coefficients)];
         
         % Descomentar si quieres pintar
-        %{
+        
         ss = ifft(tmp);
         aux = zeros(400);
         files = round(real(ss) + 200);
         cols = round(imag(ss) + 200);
         aux(sub2ind(size(aux),files,cols)) = 1;
         figure, imshow(aux), title('image with 20 descriptors')
-        %}
+        
     else
         coefficients = zeros(40,1);
     end
